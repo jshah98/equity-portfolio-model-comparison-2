@@ -70,12 +70,14 @@ NoPeriods = 6;
 
 % Monte-Carlo simulations 
 MCList = {'MC_Gaussian' 'MC_HM'};
+
 MCList = cellfun(@str2func, MCList, 'UniformOutput', false);
 NoSimulations = length(MCList);
 
 
 % Investment strategies
-invList = {'CVaR' 'CVaR_robust'};
+invList = {'CVaR' 'CVaR_robust_box'};
+
 invList = cellfun(@str2func, invList, 'UniformOutput', false);
 NoStrats = length(invList);
 
