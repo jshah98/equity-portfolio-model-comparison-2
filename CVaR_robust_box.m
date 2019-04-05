@@ -38,23 +38,17 @@ function [x] = CVaR_robust_box(rets)
     % Scaling parameter epsilon for uncertainty set
     ep = norminv(1 - (1 - r_alpha) / 2, 0, 1);
     
-    x0 = [(1 / n) * ones(n, 1); (1 / n) * ones(n, 1); ones(S, 1); 1];
+    k = (1 / ((1 - alpha) * S));
 
-    x = fmincon(@(x)objFun(x, mu, Q, lambda, sqrtTh, ep, n, S, alpha), x0, A, b, ...  %解最优解 fmincon解非线性
-                Aeq, beq, lb, ub, @(x)nonlcon(x), options);
-    x = x(1:n);
     
-end
+    c = [-lamda * mu;
+         lambda * ep .* sqrtTh' * ones(S,1);
+          k * ones(S,1);
+          1       ];
+    y = linprog( c, A, b, Aeq, beq, lb, ub );
+ 
 
-function f = objFun(x, mu, Q, lambda, sqrtTh, ep, n, S, alpha);
-  k = (1 / ((1 - alpha) * S));
-  f = x(end) + k * sum(x(2 * n + 1:end - 1)) - lambda .* mu' * x(1:n) + lambda * ep .* sqrtTh' * x(n + 1:2 * n);
-end
-
-function [c,ceq] = nonlcon(x) 
-
-    c = [];
-    ceq = [];
-
+    y = x(1:n);
+    
 end
 
