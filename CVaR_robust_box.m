@@ -48,7 +48,7 @@ function [x] = CVaR_robust_box(rets)
     y = linprog( c, A, b, Aeq, beq, lb, ub );
  
 
-    y = x(1:n);
+    x = y(1:n);
     
 end
 
