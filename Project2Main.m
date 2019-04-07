@@ -50,6 +50,8 @@ returns = array2table(returns);
 returns.Properties.VariableNames = tickers;
 returns.Properties.RowNames = cellstr(datetime(factorRet.Properties.RowNames));
 
+riskFree = table2array(riskFree);
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 2. Define your initial parameters
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -101,6 +103,9 @@ pers = NaT(NoPeriods, 1);
 
 exp_r = ones (NoPeriods, NoSimulations*NoStrats); 
 realized_std_dev = ones (NoPeriods, NoSimulations*NoStrats); 
+
+
+periodRiskFree = zeros(NoPeriods,1);
 
 for t = 1 : NoPeriods
     
@@ -179,6 +184,12 @@ plotDates = dates(dates >= datetime('2013-01-01'));
 portf_rets = zeros (length(plotDates)-1, NoStrats * NoSimulations);
 realized_returns = zeros(NoStrats * NoSimulations, 1);
 exp_sd = zeros(NoPeriods, NoStrats * NoSimulations);
+
+%Initailizing mean for geometric mean of portfolio return for each period
+portfolioPeriodReturns = zeros(6, NoSimulations * NoStrats);
+%Initalizing Sharpe Ratio Matrix
+sharpeRatio = zeros(6, NoSimulations * NoStrats);
+
 % Calculating annualized return of each portfolio over the 3 years.
 for k = 1 : NoSimulations * NoStrats
     
@@ -193,6 +204,23 @@ for k = 1 : NoSimulations * NoStrats
     for t = 1:NoPeriods
         exp_sd(t, k) = sqrt(x{k}(:, t)' * Q{t} * x{k}(:, t));
     end
+    
+     %Calculating geomean of each period
+  
+    portfolioPeriodReturns(1,k) = geomean(portf_rets(1:26,k));
+    portfolioPeriodReturns(2,k) = geomean(portf_rets(27:52,k));
+    portfolioPeriodReturns(3,k) = geomean(portf_rets(53:78,k));
+    portfolioPeriodReturns(4,k) = geomean(portf_rets(79:104,k));
+    portfolioPeriodReturns(5,k) = geomean(portf_rets(105:130,k));
+    portfolioPeriodReturns(6,k) = geomean(portf_rets(131:156,k));
+    %Calculating period Sharpe return for portfolio
+    sharpeRatio(1,k) = (portfolioPeriodReturns(1,k) - 1 - periodRiskFree(1,1))/realized_std_dev(1,k);
+    sharpeRatio(2,k) = (portfolioPeriodReturns(2,k) - 1 - periodRiskFree(2,1)) / realized_std_dev(2,k);
+    sharpeRatio(3,k) = (portfolioPeriodReturns(3,k) - 1 - periodRiskFree(3,1) ) /  realized_std_dev(3,k);
+    sharpeRatio(4,k) = (portfolioPeriodReturns(4,k) - 1 - periodRiskFree(4,1)) / realized_std_dev(4,k);
+    sharpeRatio(5,k) = (portfolioPeriodReturns(5,k) - 1 - periodRiskFree(5,1)) / realized_std_dev(5,k);
+    sharpeRatio(6,k) = (portfolioPeriodReturns(6,k) - 1- periodRiskFree(6,1))/ realized_std_dev(6,k);
+    
 end
 
 
