@@ -1,5 +1,5 @@
 %% MIE377 (Winter 2019) - Project 1
-% The purpose of this program is to implementtwo different stochastic 
+% The purpose of this program is to implement two different stochastic 
 % processes to simulate scenarios: 
 % (i) a Gaussian process, and 
 % (ii) a non-normal stochastic process with higher moments
@@ -105,7 +105,7 @@ exp_r = ones (NoPeriods, NoSimulations*NoStrats);
 realized_std_dev = ones (NoPeriods, NoSimulations*NoStrats); 
 
 
-periodRiskFree = zeros(NoPeriods,1);
+
 
 for t = 1 : NoPeriods
     
@@ -190,6 +190,19 @@ portfolioPeriodReturns = zeros(6, NoSimulations * NoStrats);
 %Initalizing Sharpe Ratio Matrix
 sharpeRatio = zeros(6, NoSimulations * NoStrats);
 
+rf = zeros(6, 1);
+
+rf(1) = (geomean(riskFree(53:52+26)+1)^52-1);
+rf(2) = (geomean(riskFree(52+26+1:52+52)+1)^52-1);
+rf(3) = (geomean(riskFree(52+52+1:52+78)+1)^52-1);
+rf(4) = (geomean(riskFree(52+79: 52+104)+1)^52-1);
+rf(5) = (geomean(riskFree(52+105:52+130)+1)^52-1);
+rf(6) = (geomean(riskFree(52+131:52+156)+1)^52-1);
+    
+
+
+mean_rsd = mean(realized_std_dev) ;
+
 % Calculating annualized return of each portfolio over the 3 years.
 for k = 1 : NoSimulations * NoStrats
     
@@ -198,6 +211,10 @@ for k = 1 : NoSimulations * NoStrats
     % Converting weekly returns to annualized returns
     realized_returns(k) = (geomean(portf_rets(:, k)))^52 -1;
     
+    sharpeRatio(:, k) = ((exp_r(:, k)+1).^52-1 - rf(:, 1))./(sqrt(52)*mean_rsd(k));
+    
+    
+    
     exp_r(1, k) = (geomean(exp_r(:, k) + 1))^52 -1;
 
     % Calculating expected portfolio variance for each portfolio
@@ -205,21 +222,7 @@ for k = 1 : NoSimulations * NoStrats
         exp_sd(t, k) = sqrt(x{k}(:, t)' * Q{t} * x{k}(:, t));
     end
     
-     %Calculating geomean of each period
-  
-    portfolioPeriodReturns(1,k) = geomean(portf_rets(1:26,k));
-    portfolioPeriodReturns(2,k) = geomean(portf_rets(27:52,k));
-    portfolioPeriodReturns(3,k) = geomean(portf_rets(53:78,k));
-    portfolioPeriodReturns(4,k) = geomean(portf_rets(79:104,k));
-    portfolioPeriodReturns(5,k) = geomean(portf_rets(105:130,k));
-    portfolioPeriodReturns(6,k) = geomean(portf_rets(131:156,k));
-    %Calculating period Sharpe return for portfolio
-    sharpeRatio(1,k) = (portfolioPeriodReturns(1,k) - 1 - periodRiskFree(1,1))/realized_std_dev(1,k);
-    sharpeRatio(2,k) = (portfolioPeriodReturns(2,k) - 1 - periodRiskFree(2,1)) / realized_std_dev(2,k);
-    sharpeRatio(3,k) = (portfolioPeriodReturns(3,k) - 1 - periodRiskFree(3,1) ) /  realized_std_dev(3,k);
-    sharpeRatio(4,k) = (portfolioPeriodReturns(4,k) - 1 - periodRiskFree(4,1)) / realized_std_dev(4,k);
-    sharpeRatio(5,k) = (portfolioPeriodReturns(5,k) - 1 - periodRiskFree(5,1)) / realized_std_dev(5,k);
-    sharpeRatio(6,k) = (portfolioPeriodReturns(6,k) - 1- periodRiskFree(6,1))/ realized_std_dev(6,k);
+
     
 end
 
