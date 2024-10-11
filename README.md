@@ -1,0 +1,5 @@
+## Equity Portfolios - Model Comparisons II
+
+April 2019
+
+The purpose of this project was to study Conditional Value-at-Risk (CVaR) optimization and Robust CVaR with scenario-based optimization using Monte-Carlo simulations. Two simulations were be used: Gaussian Monte-Carlo and Non-normal Monte-Carlo with higher moments. The simulations were used to create factor scenarios for each of the Fama-French factor returns. The Fama-French model was then used to create 5000 asset scenarios which were used to create portfolios which minimize losses using Conditional Value-at-Risk (CVaR) with a confidence level of 95%. A Robust CVaR portfolio was also created with a robustness level of 90%. It was observed that the portfolios had very similar volatility expectations and realizations, but those created using the Non-normal Monte-Carlo simulations had higher returns (11.6% annually) and better Sharpe ratios. Accuracy of results can be improved with the inclusion of more assets, observation of the assets for a longer time period, more simulations and inclusion of investor perspectives in the formulation of the problem.
